@@ -1,0 +1,34 @@
+JFDML JFormDesigner: "8.2.4.0.393" Java: "21.0.4" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+			"$horizontalGroup": "par l {seq l {space :::p, comp lblImg:::p:353:p, space s:::p, par l:::p {comp btnCancelar::::130:x, comp btnLogin::l::130:x, comp btnCadastrar::l::130:x}, space ::11:x}}"
+			"$verticalGroup": "par l {seq {par l:::p {seq {space :p:22:p, comp lblImg:::p:295:p}, seq {space :p:75:p, comp btnLogin:::p:43:p, space s:::p, comp btnCancelar:::p:43:p, space :::x, comp btnCadastrar:::p:43:p}}, space ::62:x}}"
+		} ) {
+			name: "this"
+			"title": "LOGIN"
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblImg"
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "btnLogin"
+				"text": "LOGIN"
+				"background": sfield java.awt.Color green
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "btnCancelar"
+				"text": "CANCELAR"
+				"background": sfield java.awt.Color red
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "btnCadastrar"
+				"text": "CADASTRAR"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 520, 410 )
+		} )
+	}
+}

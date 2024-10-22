@@ -207,6 +207,7 @@ public class frmCadastro extends JFrame implements ActionListener {
 
         }
         if (e.getSource() == btnCapturar) {
+            openCan.stopWebcam();
             openCan.saveImage("captured_image_"+ UUID.randomUUID() +".png");
         }
         if (e.getSource() == btnCancelar) {

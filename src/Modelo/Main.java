@@ -1,10 +1,15 @@
 package Modelo;
-import Apresentacao.frmPrincipal;
+import Apresentacao.frmCadastro;
+import Apresentacao.frmLogin;
 
 public class Main {
 
     public static void main(String[] args) {
-        frmPrincipal frm = new frmPrincipal();
-        frm.setVisible(true);
+//        frmLogin frm = new frmLogin();
+//        frm.setVisible(true);
+//        frmCadastro frm = new frmCadastro();
+//        frm.setVisible(true);
+        ProcessarImg processarImg = new ProcessarImg();
+        processarImg.processarImg();
     }
 }
