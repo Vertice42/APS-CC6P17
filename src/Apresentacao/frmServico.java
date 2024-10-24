@@ -132,7 +132,7 @@ public class frmServico extends JFrame {
                                     .addComponent(label1, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)
                                     .addGap(18, 18, 18)
                                     .addComponent(textField1, GroupLayout.PREFERRED_SIZE, 129, GroupLayout.PREFERRED_SIZE)))))
-                    .addGap(15, 15, Short.MAX_VALUE))
+                    .addGap(12, 12, Short.MAX_VALUE))
         );
         contentPaneLayout.setVerticalGroup(
             contentPaneLayout.createParallelGroup()
@@ -160,7 +160,7 @@ public class frmServico extends JFrame {
                         .addGroup(contentPaneLayout.createSequentialGroup()
                             .addGap(18, 18, 18)
                             .addComponent(scrollPane1, GroupLayout.PREFERRED_SIZE, 174, GroupLayout.PREFERRED_SIZE)))
-                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
                     .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(btnPrimeiro)
                         .addComponent(btnVoltar)

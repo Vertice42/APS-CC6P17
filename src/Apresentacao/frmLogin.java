@@ -4,11 +4,13 @@
 
 package Apresentacao;
 
+import Modelo.CompareImages;
 import Modelo.OpenCan;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.UUID;
 import javax.swing.*;
 import javax.swing.GroupLayout;
 
@@ -96,6 +98,17 @@ public class frmLogin extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnLogin) {
+            OpenCan openCan = new OpenCan();
+            String name = "captured_image_" + UUID.randomUUID() + ".png";
+            openCan.stopWebcam();
+            Boolean salvo = openCan.saveImage(name);
+            if(salvo == true) {
+                System.out.print("Imagem Salva");
+//                CompareImages compareImages = new CompareImages();
+//                compareImages.CompararImagem("src/resources/" + name);
+            } else {
+                System.out.println("Erro ao Salvar Imagem");
+            }
 
         }
         if (e.getSource() == btnCancelar) {

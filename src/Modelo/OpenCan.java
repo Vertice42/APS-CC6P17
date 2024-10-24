@@ -1,7 +1,10 @@
 package Modelo;
 
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
+import org.opencv.core.*;
+import org.opencv.core.Point;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.CascadeClassifier;
+import org.opencv.objdetect.Objdetect;
 import org.opencv.videoio.VideoCapture;
 
 import javax.imageio.ImageIO;
@@ -46,11 +49,35 @@ public class OpenCan {
             System.out.println("Camera não Localizada!");
             return;
         }
-
+        CascadeClassifier Rosto = new CascadeClassifier("src/data/haarcascades/haarcascade_frontalface_default.xml");
+        CascadeClassifier Olhos = new CascadeClassifier("src/data/haarcascades/haarcascade_eye.xml");
         running = true;
         Mat frame = new Mat();
         while (running) {
             if (camera.read(frame)) {
+
+                Mat cinza = new Mat();
+                Imgproc.cvtColor(frame, cinza, Imgproc.COLOR_BGR2GRAY);
+                MatOfRect deteccoesDeRostos = new MatOfRect();
+                Rosto.detectMultiScale(cinza, deteccoesDeRostos, 1.1, 3, Objdetect.CASCADE_SCALE_IMAGE, new Size(30, 30), new Size());
+                MatOfRect deteccoesDeOlhos = new MatOfRect();
+
+                for (Rect retangulo : deteccoesDeRostos.toArray()) {
+
+                    Mat regiaoDoRosto = cinza.submat(retangulo);
+                    Olhos.detectMultiScale(regiaoDoRosto, deteccoesDeOlhos, 1.1, 5, Objdetect.CASCADE_SCALE_IMAGE, new Size(30, 30), new Size());
+
+                    for (Rect olho : deteccoesDeOlhos.toArray()) {
+                        org.opencv.core.Point centroDoOlho = new org.opencv.core.Point(retangulo.x + olho.x +  (double) olho.width / 2, retangulo.y + olho.y + (double) olho.height / 2);
+                        Imgproc.circle(frame, centroDoOlho, 5, new Scalar(255, 0, 0), 2);
+                    }
+                }
+
+
+                for (Rect retangulo : deteccoesDeRostos.toArray()) {
+                    Imgproc.rectangle(frame, new org.opencv.core.Point(retangulo.x, retangulo.y), new Point(retangulo.x + retangulo.width, retangulo.y + retangulo.height), new Scalar(0, 255, 0));
+                }
+
                 BufferedImage bufferedImage = matToBufferedImage(frame);
                 BufferedImage resizedImage = CentralizarImg(bufferedImage, imageLabel.getWidth(), imageLabel.getHeight());
                 ImageIcon image = new ImageIcon(resizedImage);
@@ -91,17 +118,21 @@ public class OpenCan {
         return imgGerada;
     }
 
-    public void saveImage(String fileName) {
+    public Boolean saveImage(String fileName) {
+        Boolean salvo = true;
         String filePath = "src/resources/" + fileName;
         if (ImgSalva != null) {
             try {
                 ImageIO.write(ImgSalva, "png", new File(filePath));
                 System.out.println("Imagem Salva em " + filePath);
+                salvo = true;
             } catch (IOException e) {
                 e.printStackTrace();
+                salvo = false;
             }
         } else {
             System.out.println("Erro ao Salvar Imagem!!");
         }
+        return salvo;
     }
 }

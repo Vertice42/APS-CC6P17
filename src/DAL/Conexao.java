@@ -6,7 +6,9 @@ import java.sql.SQLException;
 
 public class Conexao {
     public static Connection getConnection() throws SQLException {
-        String url = "jdbc:mysql://localhost/cc6p17?user=sa&password=pfb#2011&useSSL=true&serverTimezone=UTC";
+        String user = "david";
+        String senha = "pfb#2011";
+        String url = "jdbc:mysql://localhost:3306/cc6p17?user=" + user + "&password=" + senha;
         Connection c = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -16,10 +18,11 @@ public class Conexao {
         }
         return c;
     }
-    public static void main(String args[]) {
+
+    public static void main(String[] args) {
         try {
             Connection c = Conexao.getConnection();
-            System.out.println("Conectado!");
+            System.out.println("Conexão realizada com sucesso!");
             c.close();
         } catch (SQLException err) {
             err.printStackTrace();
