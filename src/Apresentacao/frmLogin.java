@@ -10,6 +10,7 @@ import Modelo.OpenCan;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.UUID;
 import javax.swing.*;
 import javax.swing.GroupLayout;
@@ -98,18 +99,28 @@ public class frmLogin extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnLogin) {
-            OpenCan openCan = new OpenCan();
-            String name = "captured_image_" + UUID.randomUUID() + ".png";
             openCan.stopWebcam();
-            Boolean salvo = openCan.saveImage(name);
-            if(salvo == true) {
-                System.out.print("Imagem Salva");
-//                CompareImages compareImages = new CompareImages();
-//                compareImages.CompararImagem("src/resources/" + name);
-            } else {
-                System.out.println("Erro ao Salvar Imagem");
-            }
+            String img_UUID = "captured_image.png";
+            openCan.saveImage(img_UUID);
+            String img_Diretorio = "src/resources/" + img_UUID;
+            CompareImages compareImages = new CompareImages();
 
+            if(compareImages.VerificarImagemSalva(img_Diretorio)){
+
+                if(compareImages.CompararImagem(img_Diretorio)){
+                    JOptionPane.showMessageDialog(null, "Pode acessar!!");
+                    frmPrincipal frmp = new frmPrincipal();
+                    frmp.setVisible(true);
+                    this.dispose();
+                }else {
+                    JOptionPane.showMessageDialog(null, "Não pode acessar!!");
+                    File file = new File(img_Diretorio);
+                    file.delete();
+                }
+            }
+            else{
+                JOptionPane.showMessageDialog(null, "Não foi possível verificar a imagem.");
+            }
         }
         if (e.getSource() == btnCancelar) {
             System.exit(0);

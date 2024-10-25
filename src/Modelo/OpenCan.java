@@ -85,8 +85,10 @@ public class OpenCan {
                 imageLabel.repaint();
             }
         }
+
         ImgSalva = matToBufferedImage(frame);
         camera.release();
+
     }
 
     public void stopWebcam() {

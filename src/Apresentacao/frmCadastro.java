@@ -4,6 +4,7 @@
 
 package Apresentacao;
 
+import Modelo.CompareImages;
 import Modelo.OpenCan;
 import jdk.jfr.Label;
 
@@ -208,7 +209,10 @@ public class frmCadastro extends JFrame implements ActionListener {
         }
         if (e.getSource() == btnCapturar) {
             openCan.stopWebcam();
-            openCan.saveImage("captured_image_"+ UUID.randomUUID() +".png");
+            String img_UUID = "captured_image_"+ UUID.randomUUID() +".png";
+            openCan.saveImage(img_UUID);
+
+
         }
         if (e.getSource() == btnCancelar) {
             this.dispose();

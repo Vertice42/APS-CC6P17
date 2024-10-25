@@ -4,28 +4,31 @@ import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.objdetect.CascadeClassifier;
 
+import javax.swing.*;
+import java.io.File;
+
 public class CompareImages {
+    private Boolean isSimilar;
 
-
-    public void CompararImagem(String url1){
+    public Boolean CompararImagem(String url1){
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-
+        isSimilar = false;
 
         // Carregar o classificador Haar para face e olhos
-        CascadeClassifier faceCascade = new CascadeClassifier("src/data/haarcascades/haarcascade_frontalface_default.xml");
-        CascadeClassifier eyeCascade = new CascadeClassifier("src/data/haarcascades/haarcascade_eye.xml");
+        CascadeClassifier ClassRosto = new CascadeClassifier("src/data/haarcascades/haarcascade_frontalface_default.xml");
+        CascadeClassifier ClassOlhos = new CascadeClassifier("src/data/haarcascades/haarcascade_eye.xml");
 
         // Carregar a imagem salva e a imagem capturada
-        Mat image1 = Imgcodecs.imread("src/resources/captured_image_ed759930-e0bf-481f-a762-e689503e2ac7.png");
+        Mat image1 = Imgcodecs.imread("src/resources/captured_image_ecb1feaf-d3eb-47e0-88d3-a1b6fa48e9fc.png");
         Mat image2 = Imgcodecs.imread(url1);
 
         // Detectar a face e os olhos em ambas as imagens
-        Point[] landmarksImage1 = detectLandmarks(image1, faceCascade, eyeCascade);
-        Point[] landmarksImage2 = detectLandmarks(image2, faceCascade, eyeCascade);
+        Point[] landmarksImage1 = detectLandmarks(image1, ClassRosto, ClassOlhos);
+        Point[] landmarksImage2 = detectLandmarks(image2, ClassRosto, ClassOlhos);
 
         if (landmarksImage1 == null || landmarksImage2 == null) {
-            System.out.println("Não foi possível detectar as características faciais nas imagens.");
-            return;
+            JOptionPane.showMessageDialog(null, "Não foi possível detectar as características faciais nas imagens.");
+            return isSimilar = false;
         }
 
         // Calcular as distâncias Euclidianas entre os pontos (ex.: entre os olhos e nariz)
@@ -43,12 +46,14 @@ public class CompareImages {
         System.out.println("Distância entre o olho esquerdo e o nariz na imagem 2: " + distanceNoseImage2);
 
         // Definir um threshold de semelhança
-        if (Math.abs(distanceEyesImage1 - distanceEyesImage2) < 10 &&
-                Math.abs(distanceNoseImage1 - distanceNoseImage2) < 10) {
-            System.out.println("As características faciais são semelhantes.");
+        if (Math.abs(distanceEyesImage1 - distanceEyesImage2) < 10 && Math.abs(distanceNoseImage1 - distanceNoseImage2) < 10) {
+            isSimilar = true;
+            JOptionPane.showMessageDialog(null, "Imagens similares.");
         } else {
-            System.out.println("As características faciais são diferentes.");
+            isSimilar = false;
+            JOptionPane.showMessageDialog(null, "Imagens diferentes.");
         }
+        return  isSimilar;
     }
 
     public static Point[] detectLandmarks(Mat image, CascadeClassifier faceCascade, CascadeClassifier eyeCascade) {
@@ -86,5 +91,24 @@ public class CompareImages {
 
     public static double calculateDistance(Point p1, Point p2) {
         return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+    }
+    public Boolean VerificarImagemSalva(String imgSalva){
+        Boolean SaveImage = false;
+        File file = new File(imgSalva);
+
+        if (file.exists() && !file.isDirectory()) {
+            Mat image = Imgcodecs.imread(imgSalva);
+            if (image.empty()) {
+                SaveImage = false;
+                System.out.println("Erro ao carregar a imagem.");
+            } else {
+                SaveImage = true;
+                System.out.println("Imagem carregada com sucesso.");
+            }
+        } else {
+            SaveImage = false;
+            System.out.println("Arquivo não encontrado: " + imgSalva);
+        }
+        return SaveImage;
     }
 }
