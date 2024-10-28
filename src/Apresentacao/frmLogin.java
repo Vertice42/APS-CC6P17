@@ -6,12 +6,17 @@ package Apresentacao;
 
 import Modelo.CompareImages;
 import Modelo.OpenCan;
+import Modelo.VerificarSemelhancaImagens;
+import org.opencv.core.Mat;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.UUID;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.GroupLayout;
 
@@ -100,26 +105,21 @@ public class frmLogin extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnLogin) {
             openCan.stopWebcam();
-            String img_UUID = "captured_image.png";
-            openCan.saveImage(img_UUID);
-            String img_Diretorio = "src/resources/" + img_UUID;
-            CompareImages compareImages = new CompareImages();
-
-            if(compareImages.VerificarImagemSalva(img_Diretorio)){
-
-                if(compareImages.CompararImagem(img_Diretorio)){
-                    JOptionPane.showMessageDialog(null, "Pode acessar!!");
-                    frmPrincipal frmp = new frmPrincipal();
-                    frmp.setVisible(true);
-                    this.dispose();
-                }else {
-                    JOptionPane.showMessageDialog(null, "Não pode acessar!!");
-                    File file = new File(img_Diretorio);
-                    file.delete();
-                }
+            openCan.saveRosto("temp.png");
+            // Verificar se a imagem foi salva
+            File file = new File("src/resources/temp.png");
+            if (!file.exists()) {
+                System.out.println("Erro ao salvar imagem!");
+                return;
             }
-            else{
-                JOptionPane.showMessageDialog(null, "Não foi possível verificar a imagem.");
+            VerificarSemelhancaImagens verificarSemelhancaImagens = new VerificarSemelhancaImagens();
+            if(verificarSemelhancaImagens.HistogramaCalculo("src/resources/Elon2.png", "src/resources/temp.png")) {
+                frmPrincipal frm = new frmPrincipal();
+                frm.setVisible(true);
+                file.delete();
+            }else {
+                JOptionPane.showMessageDialog(null, "Usuário não cadastrado!");
+                file.delete();
             }
         }
         if (e.getSource() == btnCancelar) {

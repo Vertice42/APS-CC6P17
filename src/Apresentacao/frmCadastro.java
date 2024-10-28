@@ -5,6 +5,7 @@
 package Apresentacao;
 
 import Modelo.CompareImages;
+import Modelo.Controle;
 import Modelo.OpenCan;
 import jdk.jfr.Label;
 
@@ -13,6 +14,7 @@ import javax.swing.GroupLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -159,6 +161,14 @@ public class frmCadastro extends JFrame implements ActionListener {
         );
         pack();
         setLocationRelativeTo(getOwner());
+        cbxAcesso.addItem("Administrador");
+        cbxAcesso.addItem("Intermediario");
+        cbxAcesso.addItem("Usuario");
+
+        cbxDepartamento.addItem("Serviços Gerais");
+        cbxDepartamento.addItem("Orçamentos");
+        cbxDepartamento.addItem("Gestor");
+
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
         btnAvancar.addActionListener(this);
         btnCancelar.addActionListener(this);
@@ -189,6 +199,7 @@ public class frmCadastro extends JFrame implements ActionListener {
     private JButton btnIniciar;
     private JButton btnParar;
     private JButton btnCapturar;
+    private String imgUUID = "";
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
 
     @Override
@@ -208,15 +219,21 @@ public class frmCadastro extends JFrame implements ActionListener {
 
         }
         if (e.getSource() == btnCapturar) {
+            if(txfNome.getText().isEmpty()){
+                JOptionPane.showMessageDialog(null, "Informe o nome do usuário!");
+                return;
+            }
+            imgUUID = txfNome.getText() + "_" + UUID.randomUUID() + ".png";
+            openCan.saveRosto(imgUUID); // Salva a imagem
             openCan.stopWebcam();
-            String img_UUID = "captured_image_"+ UUID.randomUUID() +".png";
-            openCan.saveImage(img_UUID);
-
-
         }
         if (e.getSource() == btnCancelar) {
             this.dispose();
         }
-
+        if(e.getSource() == btnSalvar){
+            Controle controle = new Controle();
+            controle.SalvarUser(txfNome.getText(), cbxAcesso.getSelectedIndex(), Objects.requireNonNull(cbxDepartamento.getSelectedItem()).toString(), imgUUID);
+            JOptionPane.showMessageDialog(null, controle.mensagem);
+        }
     }
 }

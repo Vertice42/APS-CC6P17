@@ -6,8 +6,8 @@ import java.sql.SQLException;
 
 public class Conexao {
     public static Connection getConnection() throws SQLException {
-        String user = "david";
-        String senha = "pfb#2011";
+        String user = "root";
+        String senha = "";
         String url = "jdbc:mysql://localhost:3306/cc6p17?user=" + user + "&password=" + senha;
         Connection c = null;
         try {
@@ -19,13 +19,5 @@ public class Conexao {
         return c;
     }
 
-    public static void main(String[] args) {
-        try {
-            Connection c = Conexao.getConnection();
-            System.out.println("Conexão realizada com sucesso!");
-            c.close();
-        } catch (SQLException err) {
-            err.printStackTrace();
-        }
-    }
+
 }

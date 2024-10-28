@@ -21,30 +21,10 @@ public class OpenCan {
     private volatile boolean running = false;
     private BufferedImage ImgSalva;
 
-//    public void openWebcam(JLabel imageLabel) {
-//        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-//        VideoCapture camera = new VideoCapture(0);
-//        if (!camera.isOpened()) {
-//            System.out.println("Camera não Localizada!");
-//            return;
-//        }
-//
-//        running = true;
-//        Mat frame = new Mat();
-//        while (running) {
-//            if (camera.read(frame)) {
-//                ImageIcon image = new ImageIcon(matToBufferedImage(frame));
-//                imageLabel.setIcon(image);
-//                imageLabel.repaint();
-//            }
-//        }
-//
-//        camera.release();
-//    }
-
     public void openWebcam(JLabel imageLabel) {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         VideoCapture camera = new VideoCapture(0);
+        Mat frame = new Mat();
         if (!camera.isOpened()) {
             System.out.println("Camera não Localizada!");
             return;
@@ -52,30 +32,30 @@ public class OpenCan {
         CascadeClassifier Rosto = new CascadeClassifier("src/data/haarcascades/haarcascade_frontalface_default.xml");
         CascadeClassifier Olhos = new CascadeClassifier("src/data/haarcascades/haarcascade_eye.xml");
         running = true;
-        Mat frame = new Mat();
+
         while (running) {
             if (camera.read(frame)) {
-
                 Mat cinza = new Mat();
                 Imgproc.cvtColor(frame, cinza, Imgproc.COLOR_BGR2GRAY);
+
                 MatOfRect deteccoesDeRostos = new MatOfRect();
                 Rosto.detectMultiScale(cinza, deteccoesDeRostos, 1.1, 3, Objdetect.CASCADE_SCALE_IMAGE, new Size(30, 30), new Size());
                 MatOfRect deteccoesDeOlhos = new MatOfRect();
 
-                for (Rect retangulo : deteccoesDeRostos.toArray()) {
-
+                if (deteccoesDeRostos.toArray().length > 0) {
+                    Rect retangulo = deteccoesDeRostos.toArray()[0];
                     Mat regiaoDoRosto = cinza.submat(retangulo);
                     Olhos.detectMultiScale(regiaoDoRosto, deteccoesDeOlhos, 1.1, 5, Objdetect.CASCADE_SCALE_IMAGE, new Size(30, 30), new Size());
 
+                    int olhosDetectados = 0;
                     for (Rect olho : deteccoesDeOlhos.toArray()) {
-                        org.opencv.core.Point centroDoOlho = new org.opencv.core.Point(retangulo.x + olho.x +  (double) olho.width / 2, retangulo.y + olho.y + (double) olho.height / 2);
+                        if (olhosDetectados >= 2) break;
+                        Point centroDoOlho = new Point(retangulo.x + olho.x + (double) olho.width / 2, retangulo.y + olho.y + (double) olho.height / 2);
                         Imgproc.circle(frame, centroDoOlho, 5, new Scalar(255, 0, 0), 2);
+                        olhosDetectados++;
                     }
-                }
 
-
-                for (Rect retangulo : deteccoesDeRostos.toArray()) {
-                    Imgproc.rectangle(frame, new org.opencv.core.Point(retangulo.x, retangulo.y), new Point(retangulo.x + retangulo.width, retangulo.y + retangulo.height), new Scalar(0, 255, 0));
+                    Imgproc.rectangle(frame, new Point(retangulo.x, retangulo.y), new Point(retangulo.x + retangulo.width, retangulo.y + retangulo.height), new Scalar(0, 255, 0));
                 }
 
                 BufferedImage bufferedImage = matToBufferedImage(frame);
@@ -83,16 +63,19 @@ public class OpenCan {
                 ImageIcon image = new ImageIcon(resizedImage);
                 imageLabel.setIcon(image);
                 imageLabel.repaint();
+                ImgSalva = matToBufferedImage(frame);
             }
         }
 
-        ImgSalva = matToBufferedImage(frame);
+
         camera.release();
+
 
     }
 
     public void stopWebcam() {
         running = false;
+
     }
 
     private BufferedImage matToBufferedImage(Mat mat) {
@@ -120,21 +103,46 @@ public class OpenCan {
         return imgGerada;
     }
 
-    public Boolean saveImage(String fileName) {
-        Boolean salvo = true;
-        String filePath = "src/resources/" + fileName;
-        if (ImgSalva != null) {
+    public boolean saveRosto(String fileName) {
+        if (ImgSalva == null) {
+            System.out.println("Erro ao Salvar Imagem!!");
+            return false;
+        }
+
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        Mat image = bufferedImageToMat(ImgSalva);
+        CascadeClassifier faceDetector = new CascadeClassifier("src/data/haarcascades/haarcascade_frontalface_default.xml");
+        MatOfRect faceDetections = new MatOfRect();
+        faceDetector.detectMultiScale(image, faceDetections);
+
+        if (faceDetections.toArray().length == 0) {
+            System.out.println("Nenhum rosto detectado!");
+            return false;
+        }
+
+        for (Rect rect : faceDetections.toArray()) {
+            Mat face = new Mat(image, rect);
+            Mat resizedFace = new Mat();
+            Size size = new Size(160, 160);
+            Imgproc.resize(face, resizedFace, size);
+
+            BufferedImage faceImage = matToBufferedImage(resizedFace);
             try {
-                ImageIO.write(ImgSalva, "png", new File(filePath));
-                System.out.println("Imagem Salva em " + filePath);
-                salvo = true;
+                ImageIO.write(faceImage, "png", new File("src/resources/" + fileName));
+                System.out.println("Rosto salvo em src/resources/" + fileName);
+                return true;
             } catch (IOException e) {
                 e.printStackTrace();
-                salvo = false;
+                return false;
             }
-        } else {
-            System.out.println("Erro ao Salvar Imagem!!");
         }
-        return salvo;
+        return false;
+    }
+
+    public Mat bufferedImageToMat(BufferedImage bi) {
+        Mat mat = new Mat(bi.getHeight(), bi.getWidth(), CvType.CV_8UC3);
+        byte[] data = ((DataBufferByte) bi.getRaster().getDataBuffer()).getData();
+        mat.put(0, 0, data);
+        return mat;
     }
 }
