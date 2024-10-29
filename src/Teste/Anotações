@@ -1,0 +1,63 @@
+openCan = new OpenCan();
+openCan = new OpenCan();
+
+
+
+@Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == btnIniciar) {
+
+            new Thread(() -> openCan.openWebcam(lblImagem)).start();
+            btnIniciar.setEnabled(false);
+            btnParar.setEnabled(true);
+            btnCapturar.setEnabled(true);
+
+        }
+        if (e.getSource() == btnParar) {
+            openCan.stopWebcam();
+            btnIniciar.setEnabled(true);
+            btnParar.setEnabled(false);
+
+        }
+        if (e.getSource() == btnCapturar) {
+            if (txfNome.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Informe o nome do usuário!");
+                return;
+            }
+            String name = txfNome.getText();
+
+            new Thread(() -> {
+                for (int i = 0; i < 26; i++) {
+                    imgUUID = name + "_" + i + "_" + "1" + ".png";
+                    openCan.SaveRosto(imgUUID);
+                    try {
+                        Thread.sleep(250); // Atraso de 1 segundo (1000 milissegundos)
+                    } catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                        System.out.println("Thread interrompida: " + ex.getMessage());
+                    }
+                }
+                openCan.stopWebcam();
+            }).start();
+        }
+        if (e.getSource() == btnCancelar) {
+            this.dispose();
+        }
+        if(e.getSource() == btnSalvar){
+            Controle controle = new Controle();
+            controle.SalvarUser(txfNome.getText(), cbxAcesso.getSelectedIndex(), Objects.requireNonNull(cbxDepartamento.getSelectedItem()).toString(), imgUUID);
+            JOptionPane.showMessageDialog(null, controle.mensagem);
+        }
+    }
+
+
+
+            btnAvancar.addActionListener(this);
+            btnCancelar.addActionListener(this);
+            btnPrimeiro.addActionListener(this);
+            btnSalvar.addActionListener(this);
+            btnUltimo.addActionListener(this);
+            btnVoltar.addActionListener(this);
+            btnIniciar.addActionListener(this);
+            btnParar.addActionListener(this);
+            btnCapturar.addActionListener(this);

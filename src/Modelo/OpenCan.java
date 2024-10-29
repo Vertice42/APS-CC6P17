@@ -2,6 +2,8 @@ package Modelo;
 
 import org.opencv.core.*;
 import org.opencv.core.Point;
+import org.opencv.dnn.Dnn;
+import org.opencv.dnn.Net;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.objdetect.Objdetect;
@@ -15,63 +17,108 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class OpenCan {
 
     private volatile boolean running = false;
     private BufferedImage ImgSalva;
 
+
     public void openWebcam(JLabel imageLabel) {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         VideoCapture camera = new VideoCapture(0);
         Mat frame = new Mat();
+
+        // Carregar o modelo de detecção de rosto (DNN)
+        Net faceNet = Dnn.readNetFromCaffe("src/data/deploy.prototxt", "src/data/pose_iter_440000.caffemodel");
         if (!camera.isOpened()) {
-            System.out.println("Camera não Localizada!");
+            System.out.println("Camera não localizada!");
             return;
         }
-        CascadeClassifier Rosto = new CascadeClassifier("src/data/haarcascades/haarcascade_frontalface_default.xml");
-        CascadeClassifier Olhos = new CascadeClassifier("src/data/haarcascades/haarcascade_eye.xml");
+
         running = true;
 
         while (running) {
             if (camera.read(frame)) {
-                Mat cinza = new Mat();
-                Imgproc.cvtColor(frame, cinza, Imgproc.COLOR_BGR2GRAY);
+                // Converter imagem para RGB para a DNN
+                Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2RGB);
+                Mat blob = Dnn.blobFromImage(frame, 1.0, new Size(300, 300), new Scalar(104, 177, 123), false, false);
 
-                MatOfRect deteccoesDeRostos = new MatOfRect();
-                Rosto.detectMultiScale(cinza, deteccoesDeRostos, 1.1, 3, Objdetect.CASCADE_SCALE_IMAGE, new Size(30, 30), new Size());
-                MatOfRect deteccoesDeOlhos = new MatOfRect();
+                // Usar o modelo de DNN para detectar rosto
+                faceNet.setInput(blob);
+                Mat detections = faceNet.forward();
 
-                if (deteccoesDeRostos.toArray().length > 0) {
-                    Rect retangulo = deteccoesDeRostos.toArray()[0];
-                    Mat regiaoDoRosto = cinza.submat(retangulo);
-                    Olhos.detectMultiScale(regiaoDoRosto, deteccoesDeOlhos, 1.1, 5, Objdetect.CASCADE_SCALE_IMAGE, new Size(30, 30), new Size());
+                // Loop para verificar se há algum rosto detectado
+                for (int i = 0; i < detections.size(2); i++) {
+                    double confidence = detections.get(0, 0)[0];
+                    if (confidence > 0.5) {  // Limite de confiança para detectar rosto
+                        int x1 = (int) (detections.get(0, 0)[0] * frame.width());
+                        int y1 = (int) (detections.get(0, 0)[0] * frame.height());
+                        int x2 = (int) (detections.get(0, 0)[0] * frame.width());
+                        int y2 = (int) (detections.get(0, 0)[0] * frame.height());
 
-                    int olhosDetectados = 0;
-                    for (Rect olho : deteccoesDeOlhos.toArray()) {
-                        if (olhosDetectados >= 2) break;
-                        Point centroDoOlho = new Point(retangulo.x + olho.x + (double) olho.width / 2, retangulo.y + olho.y + (double) olho.height / 2);
-                        Imgproc.circle(frame, centroDoOlho, 5, new Scalar(255, 0, 0), 2);
-                        olhosDetectados++;
+                        // Cortar a imagem do rosto detectado
+                        Rect faceRect = new Rect(new Point(x1, y1), new Point(x2, y2));
+                        Mat face = new Mat(frame, faceRect);
+
+                        // Gerar embedding do rosto (por exemplo, usando FaceNet)
+                        Mat faceBlob = Dnn.blobFromImage(face, 1.0 / 255.0, new Size(160, 160), new Scalar(0, 0, 0), true, false);
+                        Net embeddingNet = Dnn.readNetFromTensorflow("path/to/facenet.pb");  // Modelo de embeddings
+                        embeddingNet.setInput(faceBlob);
+                        Mat embedding = embeddingNet.forward();
+
+
                     }
-
-                    Imgproc.rectangle(frame, new Point(retangulo.x, retangulo.y), new Point(retangulo.x + retangulo.width, retangulo.y + retangulo.height), new Scalar(0, 255, 0));
                 }
 
+                // Exibir a imagem capturada com possíveis marcadores de rosto
                 BufferedImage bufferedImage = matToBufferedImage(frame);
                 BufferedImage resizedImage = CentralizarImg(bufferedImage, imageLabel.getWidth(), imageLabel.getHeight());
                 ImageIcon image = new ImageIcon(resizedImage);
                 imageLabel.setIcon(image);
                 imageLabel.repaint();
-                ImgSalva = matToBufferedImage(frame);
             }
         }
 
-
         camera.release();
-
-
     }
+
+
+
+//    public void openWebcam(JLabel imageLabel) {
+//
+//        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+//        VideoCapture camera = new VideoCapture(0);
+//        Mat frame = new Mat();
+//        if (!camera.isOpened()) {
+//            System.out.println("Camera não Localizada!");
+//            return;
+//        }
+//
+//        running = true;
+//
+//        while (running) {
+//            if (camera.read(frame)) {
+//                Mat cinza = new Mat();
+//                Imgproc.cvtColor(frame, cinza, Imgproc.COLOR_BGR2GRAY);
+//
+//                BufferedImage bufferedImage = matToBufferedImage(frame);
+//                BufferedImage resizedImage = CentralizarImg(bufferedImage, imageLabel.getWidth(), imageLabel.getHeight());
+//                ImageIcon image = new ImageIcon(resizedImage);
+//                imageLabel.setIcon(image);
+//                imageLabel.repaint();
+//
+//                //SALVAR IMAGEM < POREM NÃO ESTÁ SENDO USADA NO MOMENTO
+//
+//  //            ImgSalva = matToBufferedImage(frame);
+//            }
+//        }
+//
+//        camera.release();
+//
+//    }
 
     public void stopWebcam() {
         running = false;
@@ -93,6 +140,23 @@ public class OpenCan {
     }
 
 
+
+
+    public void SaveRosto(String fileNamePrefix) {
+    if (ImgSalva == null) {
+        System.out.println("Erro ao Salvar Imagem!!");
+        return;
+    }
+    try {
+        File outputfile = new File("src/resources/in/" + fileNamePrefix);
+        ImageIO.write(ImgSalva, "png", outputfile);
+    } catch (IOException e) {
+        System.out.println("Erro ao Salvar Imagem!!");
+        return;
+    }
+
+    }
+
     // Metodo que eu utilizo para redimensionar a imagem
     private BufferedImage CentralizarImg(BufferedImage originalImage, int targetWidth, int targetHeight) {
         Image imgProcesse = originalImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_DEFAULT);
@@ -103,46 +167,27 @@ public class OpenCan {
         return imgGerada;
     }
 
-    public boolean saveRosto(String fileName) {
-        if (ImgSalva == null) {
-            System.out.println("Erro ao Salvar Imagem!!");
-            return false;
-        }
-
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        Mat image = bufferedImageToMat(ImgSalva);
-        CascadeClassifier faceDetector = new CascadeClassifier("src/data/haarcascades/haarcascade_frontalface_default.xml");
-        MatOfRect faceDetections = new MatOfRect();
-        faceDetector.detectMultiScale(image, faceDetections);
-
-        if (faceDetections.toArray().length == 0) {
-            System.out.println("Nenhum rosto detectado!");
-            return false;
-        }
-
-        for (Rect rect : faceDetections.toArray()) {
-            Mat face = new Mat(image, rect);
-            Mat resizedFace = new Mat();
-            Size size = new Size(160, 160);
-            Imgproc.resize(face, resizedFace, size);
-
-            BufferedImage faceImage = matToBufferedImage(resizedFace);
-            try {
-                ImageIO.write(faceImage, "png", new File("src/resources/" + fileName));
-                System.out.println("Rosto salvo em src/resources/" + fileName);
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-        return false;
-    }
-
     public Mat bufferedImageToMat(BufferedImage bi) {
         Mat mat = new Mat(bi.getHeight(), bi.getWidth(), CvType.CV_8UC3);
         byte[] data = ((DataBufferByte) bi.getRaster().getDataBuffer()).getData();
         mat.put(0, 0, data);
         return mat;
+    }
+    public void ConverterParaCinza() {
+        File directory = new File("src/resources/in/");
+        File[] filesArray = directory.listFiles();
+        try{
+            for (File file : Objects.requireNonNull(filesArray)) {
+                BufferedImage image = ImageIO.read(file);
+                Mat mat = bufferedImageToMat(image);
+                Mat cinza = new Mat();
+                Imgproc.cvtColor(mat, cinza, Imgproc.COLOR_BGR2GRAY);
+                BufferedImage imgCinza = matToBufferedImage(cinza);
+                File outputfile = new File("src/resources/out/" + file.getName());
+                ImageIO.write(imgCinza, "png", outputfile);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

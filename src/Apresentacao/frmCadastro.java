@@ -4,16 +4,14 @@
 
 package Apresentacao;
 
-import Modelo.CompareImages;
+import java.awt.*;
 import Modelo.Controle;
 import Modelo.OpenCan;
-import jdk.jfr.Label;
 
 import javax.swing.*;
 import javax.swing.GroupLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -46,6 +44,7 @@ public class frmCadastro extends JFrame implements ActionListener {
         btnIniciar = new JButton();
         btnParar = new JButton();
         btnCapturar = new JButton();
+        lblimgSalva = new JLabel();
 
         //======== this ========
         setTitle("CADASTRO");
@@ -87,43 +86,52 @@ public class frmCadastro extends JFrame implements ActionListener {
         //---- btnCapturar ----
         btnCapturar.setText("Capturar Foto");
 
+        //---- lblimgSalva ----
+        lblimgSalva.setHorizontalAlignment(SwingConstants.CENTER);
+        lblimgSalva.setBackground(new Color(0x33ff33));
+        lblimgSalva.setDisplayedMnemonicIndex(-1);
+
         GroupLayout contentPaneLayout = new GroupLayout(contentPane);
         contentPane.setLayout(contentPaneLayout);
         contentPaneLayout.setHorizontalGroup(
             contentPaneLayout.createParallelGroup()
                 .addGroup(contentPaneLayout.createSequentialGroup()
                     .addGap(18, 18, 18)
-                    .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                    .addGroup(contentPaneLayout.createParallelGroup()
                         .addGroup(contentPaneLayout.createSequentialGroup()
-                            .addComponent(btnIniciar, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-                            .addGap(60, 60, 60)
-                            .addComponent(btnParar, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-                            .addGap(61, 61, 61)
-                            .addComponent(btnCapturar, GroupLayout.PREFERRED_SIZE, 121, GroupLayout.PREFERRED_SIZE))
-                        .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(contentPaneLayout.createSequentialGroup()
-                                .addComponent(btnPrimeiro, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnVoltar, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnAvancar, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnUltimo, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lblImagem, GroupLayout.PREFERRED_SIZE, 442, GroupLayout.PREFERRED_SIZE)))
-                    .addGap(18, 64, Short.MAX_VALUE)
-                    .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                        .addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
-                            .addComponent(btnSalvar, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnCancelar, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE))
-                        .addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createParallelGroup()
-                            .addComponent(cbxAcesso, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txfNome, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblDepartamento, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cbxDepartamento, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblNome, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblNivelAcesso, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE)))
-                    .addGap(20, 20, 20))
+                            .addComponent(btnPrimeiro, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(btnVoltar, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(btnAvancar, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(btnUltimo, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
+                            .addGap(0, 0, Short.MAX_VALUE))
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                            .addGroup(contentPaneLayout.createParallelGroup()
+                                .addComponent(lblImagem, GroupLayout.PREFERRED_SIZE, 442, GroupLayout.PREFERRED_SIZE)
+                                .addGroup(contentPaneLayout.createSequentialGroup()
+                                    .addComponent(btnIniciar, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+                                    .addGap(60, 60, 60)
+                                    .addGroup(contentPaneLayout.createParallelGroup()
+                                        .addComponent(lblimgSalva, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(contentPaneLayout.createSequentialGroup()
+                                            .addComponent(btnParar, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+                                            .addGap(61, 61, 61)
+                                            .addComponent(btnCapturar, GroupLayout.PREFERRED_SIZE, 121, GroupLayout.PREFERRED_SIZE)))))
+                            .addGap(18, 64, Short.MAX_VALUE)
+                            .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                .addComponent(cbxAcesso, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txfNome, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(lblDepartamento, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(cbxDepartamento, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(lblNome, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(lblNivelAcesso, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE)
+                                .addGroup(contentPaneLayout.createSequentialGroup()
+                                    .addComponent(btnSalvar, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnCancelar, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)))
+                            .addGap(20, 20, 20))))
         );
         contentPaneLayout.setVerticalGroup(
             contentPaneLayout.createParallelGroup()
@@ -133,11 +141,9 @@ public class frmCadastro extends JFrame implements ActionListener {
                         .addComponent(btnIniciar, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnCapturar, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnParar, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
-                    .addGap(32, 32, 32)
                     .addGroup(contentPaneLayout.createParallelGroup()
-                        .addComponent(lblImagem, GroupLayout.PREFERRED_SIZE, 371, GroupLayout.PREFERRED_SIZE)
                         .addGroup(contentPaneLayout.createSequentialGroup()
-                            .addGap(27, 27, 27)
+                            .addGap(82, 82, 82)
                             .addComponent(lblNome)
                             .addGap(18, 18, 18)
                             .addComponent(txfNome, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
@@ -148,27 +154,25 @@ public class frmCadastro extends JFrame implements ActionListener {
                             .addGap(18, 18, 18)
                             .addComponent(lblNivelAcesso)
                             .addGap(18, 18, 18)
-                            .addComponent(cbxAcesso, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)))
-                    .addGap(18, 18, 18)
+                            .addComponent(cbxAcesso, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+                            .addGap(97, 97, 97))
+                        .addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(lblimgSalva, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(lblImagem, GroupLayout.PREFERRED_SIZE, 348, GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)))
                     .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(btnUltimo, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnAvancar, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnVoltar, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnPrimeiro, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnCancelar, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnSalvar, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
-                    .addContainerGap(87, Short.MAX_VALUE))
+                        .addComponent(btnSalvar, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnCancelar, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
+                    .addContainerGap(31, Short.MAX_VALUE))
         );
         pack();
         setLocationRelativeTo(getOwner());
-        cbxAcesso.addItem("Administrador");
-        cbxAcesso.addItem("Intermediario");
-        cbxAcesso.addItem("Usuario");
-
-        cbxDepartamento.addItem("Serviços Gerais");
-        cbxDepartamento.addItem("Orçamentos");
-        cbxDepartamento.addItem("Gestor");
-
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
         btnAvancar.addActionListener(this);
         btnCancelar.addActionListener(this);
@@ -199,7 +203,8 @@ public class frmCadastro extends JFrame implements ActionListener {
     private JButton btnIniciar;
     private JButton btnParar;
     private JButton btnCapturar;
-    private String imgUUID = "";
+    private JLabel lblimgSalva;
+    private String imgUUID;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
 
     @Override
@@ -219,13 +224,31 @@ public class frmCadastro extends JFrame implements ActionListener {
 
         }
         if (e.getSource() == btnCapturar) {
-            if(txfNome.getText().isEmpty()){
+            if (txfNome.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Informe o nome do usuário!");
                 return;
             }
-            imgUUID = txfNome.getText() + "_" + UUID.randomUUID() + ".png";
-            openCan.saveRosto(imgUUID); // Salva a imagem
-            openCan.stopWebcam();
+            String name = txfNome.getText();
+
+            new Thread(() -> {
+                for (int i = 0; i < 26; i++) {
+                    imgUUID = name + "_" + i + "_" + "1" + ".png";
+                    openCan.SaveRosto(imgUUID);
+
+                    lblimgSalva.setText("Foto Salva: " + i);
+                    try {
+                        Thread.sleep(100); // Atraso de 1 segundo (1000 milissegundos)
+                    } catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                        System.out.println("Thread interrompida: " + ex.getMessage());
+                    }
+
+                }
+                openCan.stopWebcam();
+                lblimgSalva.setText("Finalizado cadastro !!");
+                openCan.ConverterParaCinza();
+            }).start();
+
         }
         if (e.getSource() == btnCancelar) {
             this.dispose();
