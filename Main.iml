@@ -6,24 +6,10 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://D:/scoped_dir5316_371501531/opencv/build/java/opencv-490.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <NATIVE>
-          <root url="file://D:/scoped_dir5316_371501531/opencv/build/java/x64" />
-        </NATIVE>
-        <SOURCES>
-          <root url="jar://D:/scoped_dir5316_371501531/opencv/build/java/opencv-490.jar!/" />
-          <root url="jar://D:/scoped_dir5316_371501531/opencv/build/java/opencv-490.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="opencv-4100" level="project" />
     <orderEntry type="library" name="mysql.connector.java" level="project" />
-    <orderEntry type="library" name="bytedeco.opencv" level="project" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="graalvm.python.embedding" level="application" />
+    <orderEntry type="library" name="javacv-1.5.10" level="project" />
   </component>
 </module>

@@ -4,6 +4,7 @@
 
 package Apresentacao;
 
+import Modelo.Controle;
 import Modelo.OpenCan;
 
 import java.awt.*;
@@ -96,15 +97,17 @@ public class frmLogin extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnLogin) {
-            openCan.stopWebcam();
-
-        }
-        if (e.getSource() == btnCancelar) {
-            System.exit(0);
-        }
-        if (e.getSource() == btnCadastrar) {
-
-        }
+//        if (e.getSource() == btnLogin) {
+//            openCan.stopWebcam();
+//            openCan.SaveRosto("rosto.png");
+//            Controle controle = new Controle();
+//            controle.Login();
+//        }
+//        if (e.getSource() == btnCancelar) {
+//            System.exit(0);
+//        }
+//        if (e.getSource() == btnCadastrar) {
+//
+//        }
     }
 }

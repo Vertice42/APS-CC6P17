@@ -4,8 +4,6 @@
 
 package Apresentacao;
 
-import Teste.MainTeste;
-
 import javax.swing.*;
 import javax.swing.GroupLayout;
 import java.awt.event.ActionEvent;
