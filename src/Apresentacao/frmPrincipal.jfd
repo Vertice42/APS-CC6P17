@@ -4,8 +4,8 @@ new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-			"$horizontalGroup": "par l {seq l {space :p:19:p, par l {comp btnCadastro:::p:115:p, par l:::p {comp btnServico:::::x, comp btnOrcamento::l:::x, comp btnAprovacao::l:::x, comp btnRelatorio::l:p:115:p}}, space ::354:x}}"
-			"$verticalGroup": "par l {seq l {space :p:32:p, comp btnCadastro:::p:39:p, space s:::p, comp btnServico:::p:39:p, space s:::p, comp btnOrcamento:::p:39:p, space s:::p, comp btnAprovacao:::p:39:p, space s:::p, comp btnRelatorio:::p:39:p, space ::45:x}}"
+			"$horizontalGroup": "par l {seq l {space :p:25:p, par l {seq {comp btnServico::::115:x, space :p:348:p}, seq {par l {comp btnOrcamento:::p:109:p, seq {comp separator1:::p:338:p, space :::p, comp lblUser:::p:100:p}, comp btnAprovacao:::p:115:p, comp btnRelatorio:::p:115:p}, space ::19:x}}}}"
+			"$verticalGroup": "par l {seq l {space :p:27:p, par t {comp lblUser:::p:28:p, seq {comp btnServico:::p:39:p, space s:::p, comp btnOrcamento:::p:39:p, space s:::p, comp btnAprovacao:::p:39:p, space s:::p, comp btnRelatorio:::p:39:p, space :p:36:p, comp separator1:::p:13:p}}, space ::58:x}}"
 		} ) {
 			name: "this"
 			"title": "SERVIÇO AMBIENTAL"
@@ -25,9 +25,11 @@ new FormModel {
 				name: "btnRelatorio"
 				"text": "RELATORIO"
 			} )
-			add( new FormComponent( "javax.swing.JButton" ) {
-				name: "btnCadastro"
-				"text": "CADASTRO"
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblUser"
+			} )
+			add( new FormComponent( "javax.swing.JSeparator" ) {
+				name: "separator1"
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )

@@ -4,6 +4,9 @@
 
 package Apresentacao;
 
+import DAL.CadUsers;
+import Modelo.Estatico;
+
 import javax.swing.*;
 import javax.swing.GroupLayout;
 import java.awt.event.ActionEvent;
@@ -13,14 +16,24 @@ import java.awt.event.ActionListener;
  * @author DAVID
  */
 public class frmPrincipal extends JFrame implements ActionListener {
-    public frmPrincipal() {
+    public frmPrincipal(int Usuario) {
+        System.out.print(Usuario);
         initComponents();
-        btnCadastro.addActionListener(this);
         btnServico.addActionListener(this);
         btnOrcamento.addActionListener(this);
         btnAprovacao.addActionListener(this);
         btnRelatorio.addActionListener(this);
-
+        CadUsers cad = new CadUsers();
+        lblUser.setText("Usuário: " + cad.BuscarUserId(Usuario));
+        if(Estatico.Priv == 1){
+            btnAprovacao.setEnabled(false);
+            btnOrcamento.setEnabled(false);
+            btnRelatorio.setEnabled(false);
+        }
+        if(Estatico.Priv == 2){
+            btnAprovacao.setEnabled(false);
+            btnServico.setEnabled(false);
+        }
     }
 
     private void initComponents() {
@@ -30,7 +43,8 @@ public class frmPrincipal extends JFrame implements ActionListener {
         btnOrcamento = new JButton();
         btnAprovacao = new JButton();
         btnRelatorio = new JButton();
-        btnCadastro = new JButton();
+        lblUser = new JLabel();
+        separator1 = new JSeparator();
 
         //======== this ========
         setTitle("SERVI\u00c7O AMBIENTAL");
@@ -48,38 +62,44 @@ public class frmPrincipal extends JFrame implements ActionListener {
         //---- btnRelatorio ----
         btnRelatorio.setText("RELATORIO");
 
-        //---- btnCadastro ----
-        btnCadastro.setText("CADASTRO");
-
         GroupLayout contentPaneLayout = new GroupLayout(contentPane);
         contentPane.setLayout(contentPaneLayout);
         contentPaneLayout.setHorizontalGroup(
             contentPaneLayout.createParallelGroup()
                 .addGroup(contentPaneLayout.createSequentialGroup()
-                    .addGap(19, 19, 19)
+                    .addGap(25, 25, 25)
                     .addGroup(contentPaneLayout.createParallelGroup()
-                        .addComponent(btnCadastro, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE)
-                        .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnServico, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnOrcamento, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnAprovacao, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnRelatorio, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE)))
-                    .addContainerGap(354, Short.MAX_VALUE))
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                            .addComponent(btnServico, GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+                            .addGap(348, 348, 348))
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                            .addGroup(contentPaneLayout.createParallelGroup()
+                                .addComponent(btnOrcamento, GroupLayout.PREFERRED_SIZE, 109, GroupLayout.PREFERRED_SIZE)
+                                .addGroup(contentPaneLayout.createSequentialGroup()
+                                    .addComponent(separator1, GroupLayout.PREFERRED_SIZE, 338, GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(lblUser, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE))
+                                .addComponent(btnAprovacao, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnRelatorio, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE))
+                            .addContainerGap(19, Short.MAX_VALUE))))
         );
         contentPaneLayout.setVerticalGroup(
             contentPaneLayout.createParallelGroup()
                 .addGroup(contentPaneLayout.createSequentialGroup()
-                    .addGap(32, 32, 32)
-                    .addComponent(btnCadastro, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
-                    .addGap(18, 18, 18)
-                    .addComponent(btnServico, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
-                    .addGap(18, 18, 18)
-                    .addComponent(btnOrcamento, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
-                    .addGap(18, 18, 18)
-                    .addComponent(btnAprovacao, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
-                    .addGap(18, 18, 18)
-                    .addComponent(btnRelatorio, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(45, Short.MAX_VALUE))
+                    .addGap(27, 27, 27)
+                    .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                        .addComponent(lblUser, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                            .addComponent(btnServico, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(btnOrcamento, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(btnAprovacao, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(btnRelatorio, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
+                            .addGap(36, 36, 36)
+                            .addComponent(separator1, GroupLayout.PREFERRED_SIZE, 13, GroupLayout.PREFERRED_SIZE)))
+                    .addContainerGap(58, Short.MAX_VALUE))
         );
         pack();
         setLocationRelativeTo(getOwner());
@@ -92,13 +112,11 @@ public class frmPrincipal extends JFrame implements ActionListener {
     private JButton btnOrcamento;
     private JButton btnAprovacao;
     private JButton btnRelatorio;
-    private JButton btnCadastro;
+    private JLabel lblUser;
+    private JSeparator separator1;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == btnCadastro){
-            frmCadastro frm = new frmCadastro();
-            frm.setVisible(true);
-        }
+        
     }
 }

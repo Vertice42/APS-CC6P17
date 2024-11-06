@@ -1,5 +1,7 @@
 package DAL;
 
+import Modelo.Estatico;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -16,7 +18,7 @@ public class CadUsers {
         try{
 
             Connection con = Conexao.getConnection();
-            String sql = "INSERT INTO caduser (Nome, Privilegio, Setor) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO caduser (Nome, Privilegios, Setor) VALUES (?, ?, ?)";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, nome);
             ps.setInt(2, privilegios);
@@ -51,6 +53,26 @@ public class CadUsers {
 
         }
         return idUser;
+    }
+    public String BuscarUserId(int idUser){
+
+        String Nome = "";
+        try {
+            Connection con = null;
+            con = Conexao.getConnection();
+            String Query = "SELECT Nome,Privilegios FROM caduser WHERE idUser = ? LIMIT 1";
+            PreparedStatement stmt = con.prepareStatement(Query);
+            stmt.setInt(1, idUser);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) { // Se o ResultSet tiver pelo menos um registro
+                Nome = rs.getString("Nome");
+                Estatico.Priv = rs.getInt("Privilegios");
+                System.out.print(Nome);
+            }
+        } catch (Exception e) {
+            mensagem = "Erro ao buscar usuário: " + e.getMessage();
+        }
+        return Nome;
     }
 }
 

@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 
 public class Caracteristicas {
     public String mensagem;
-
+    public int idUser;
     public Boolean SalvarCaracteristicas(int idUser, String Olhos, String Nariz){
         this.mensagem = "";
         try {
@@ -27,8 +27,9 @@ public class Caracteristicas {
             return false;
         }
     }
-    public void CompararCaracteristicas(Point Olhos, Point Nariz){
+    public Boolean CompararCaracteristicas(Point Olhos, Point Nariz){
         this.mensagem = "";
+
         try {
             Connection con = null;
             con = Conexao.getConnection();
@@ -36,26 +37,22 @@ public class Caracteristicas {
             PreparedStatement stmt = con.prepareStatement(Query);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt("IdUsuario");
+                idUser = rs.getInt("IdUsuario");
                 // Se o ResultSet tiver pelo menos um registro
-                System.out.print("Olhos Atual: " + Olhos.toString() + "\n");
-                System.out.print("Nariz Atual: " + Nariz.toString() + "\n");
                 Point OlhosBD = stringToPoint(rs.getString("Olhos"));
                 Point NarizBD = stringToPoint(rs.getString("Nariz"));
-                System.out.print("Olhos BD: " + OlhosBD.toString() + "\n");
-                System.out.print("Nariz BD: " + NarizBD.toString() + "\n");
                 double distanciaOlhos = Math.sqrt(Math.pow(Olhos.x - OlhosBD.x, 2) + Math.pow(Olhos.y - OlhosBD.y, 2));
                 double distanciaNariz = Math.sqrt(Math.pow(Nariz.x - NarizBD.x, 2) + Math.pow(Nariz.y - NarizBD.y, 2));
-                if (distanciaOlhos < 40 && distanciaNariz < 40) {
-                    mensagem = "Usuário encontrado!";
-                    break;
+                if (distanciaOlhos < 80 && distanciaNariz < 60) {
+                    mensagem = "Usuário Liberado! Diferença Olhos: " + distanciaOlhos + ", Diferença Nariz: " + distanciaNariz;
+                    return true;
                 }
-                mensagem = "Usuário não Liberado!";
+                mensagem = "Usuário não Liberado! Diferença Olhos: " + distanciaOlhos + ", Diferença Nariz: " + distanciaNariz;
             }
         } catch (Exception e) {
             mensagem = "Erro ao buscar usuário: " + e.getMessage();
-
         }
+        return false;
     }
     private static Point stringToPoint(String str) {
         str = str.replace("{", "").replace("}", ""); // Remove { and }

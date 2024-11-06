@@ -6,6 +6,7 @@ package Apresentacao;
 
 import DAL.Caracteristicas;
 import Modelo.Controle;
+import Modelo.Estatico;
 import Modelo.OpenCan;
 
 import java.awt.*;
@@ -98,18 +99,29 @@ public class frmLogin extends JFrame implements ActionListener {
     private JButton btnCadastrar;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
 
+    private int Usuario;
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnLogin) {
             Caracteristicas car = new Caracteristicas();
-            car.CompararCaracteristicas(openCan.getP_Olhos(), openCan.getP_Nariz());
-            JOptionPane.showMessageDialog(null, car.mensagem);
+            if(car.CompararCaracteristicas(openCan.getP_Olhos(), openCan.getP_Nariz())){
+                JOptionPane.showMessageDialog(null, car.mensagem);
+                Usuario = car.idUser;
+                openCan.stopWebcam();
+                dispose();
+                frmPrincipal frm = new frmPrincipal(Usuario);
+                frm.setVisible(true);
+            }else{
+                JOptionPane.showMessageDialog(null, car.mensagem);
+            }
         }
         if (e.getSource() == btnCancelar) {
             System.exit(0);
         }
         if (e.getSource() == btnCadastrar) {
-
+            openCan.stopWebcam();
+            frmCadastro frm = new frmCadastro();
+            frm.setVisible(true);
         }
     }
 }
