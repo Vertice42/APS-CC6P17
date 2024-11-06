@@ -4,12 +4,14 @@
 
 package Apresentacao;
 
+import DAL.Caracteristicas;
 import Modelo.Controle;
 import Modelo.OpenCan;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.swing.*;
 import javax.swing.GroupLayout;
@@ -19,7 +21,7 @@ import javax.swing.GroupLayout;
  */
 public class frmLogin extends JFrame implements ActionListener {
     private OpenCan openCan;
-
+    private String Olhos, Nariz;
     public frmLogin() {
         initComponents();
         openCan = new OpenCan();
@@ -55,29 +57,30 @@ public class frmLogin extends JFrame implements ActionListener {
             contentPaneLayout.createParallelGroup()
                 .addGroup(contentPaneLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(lblImg, GroupLayout.PREFERRED_SIZE, 353, GroupLayout.PREFERRED_SIZE)
-                    .addGap(18, 18, 18)
-                    .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                        .addComponent(btnCancelar, GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
-                        .addComponent(btnLogin, GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
-                        .addComponent(btnCadastrar, GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
-                    .addContainerGap(11, Short.MAX_VALUE))
+                    .addComponent(lblImg, GroupLayout.PREFERRED_SIZE, 442, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
+                    .addGroup(contentPaneLayout.createParallelGroup()
+                        .addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnCancelar, GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+                            .addComponent(btnLogin, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnCadastrar, GroupLayout.Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE))
+                    .addContainerGap())
         );
         contentPaneLayout.setVerticalGroup(
             contentPaneLayout.createParallelGroup()
                 .addGroup(contentPaneLayout.createSequentialGroup()
-                    .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                    .addGroup(contentPaneLayout.createParallelGroup()
                         .addGroup(contentPaneLayout.createSequentialGroup()
                             .addGap(22, 22, 22)
-                            .addComponent(lblImg, GroupLayout.PREFERRED_SIZE, 295, GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lblImg, GroupLayout.PREFERRED_SIZE, 348, GroupLayout.PREFERRED_SIZE))
                         .addGroup(contentPaneLayout.createSequentialGroup()
-                            .addGap(75, 75, 75)
+                            .addGap(92, 92, 92)
                             .addComponent(btnLogin, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
                             .addGap(18, 18, 18)
                             .addComponent(btnCancelar, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGap(75, 75, 75)
                             .addComponent(btnCadastrar, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)))
-                    .addContainerGap(62, Short.MAX_VALUE))
+                    .addContainerGap(79, Short.MAX_VALUE))
         );
         pack();
         setLocationRelativeTo(getOwner());
@@ -97,17 +100,16 @@ public class frmLogin extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-//        if (e.getSource() == btnLogin) {
-//            openCan.stopWebcam();
-//            openCan.SaveRosto("rosto.png");
-//            Controle controle = new Controle();
-//            controle.Login();
-//        }
-//        if (e.getSource() == btnCancelar) {
-//            System.exit(0);
-//        }
-//        if (e.getSource() == btnCadastrar) {
-//
-//        }
+        if (e.getSource() == btnLogin) {
+            Caracteristicas car = new Caracteristicas();
+            car.CompararCaracteristicas(openCan.getP_Olhos(), openCan.getP_Nariz());
+            JOptionPane.showMessageDialog(null, car.mensagem);
+        }
+        if (e.getSource() == btnCancelar) {
+            System.exit(0);
+        }
+        if (e.getSource() == btnCadastrar) {
+
+        }
     }
 }

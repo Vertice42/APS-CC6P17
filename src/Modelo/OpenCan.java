@@ -19,7 +19,10 @@ public class OpenCan {
 
     private volatile boolean running = false;
     private BufferedImage ImgSalva;
-
+    private String MatOlhos;
+    private String MatNariz;
+    private Point P_Olhos;
+    private Point P_Nariz;
     public void openWebcam(JLabel imageLabel) {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         VideoCapture camera = new VideoCapture(0);
@@ -45,7 +48,6 @@ public class OpenCan {
 
                 MatOfRect faces = new MatOfRect();
                 Rosto.detectMultiScale(cinza, faces);
-                Caracteristicas caracteristicas = new Caracteristicas();
                 if (faces.toArray().length == 0) {
                     System.out.println("Nenhum rosto detectado!");
                 }
@@ -59,8 +61,8 @@ public class OpenCan {
                         for (Rect eye : eyes.toArray()) {
                             Point eyeCenter = new Point(face.x + eye.x + (double) eye.width / 2, face.y + eye.y + (double) eye.height / 2);
                             Imgproc.circle(frame, eyeCenter, 3, new Scalar(255, 0, 0), -1);
-                            caracteristicas.addEye(eyeCenter);
-                            System.out.println("Olho: " + eyeCenter);
+                            MatOlhos = eyeCenter.toString();
+                            P_Olhos = eyeCenter;
                         }
                     }
 
@@ -70,8 +72,8 @@ public class OpenCan {
                         for (Rect nose : noses.toArray()) {
                             Point noseCenter = new Point(face.x + nose.x + (double) nose.width / 2, face.y + nose.y + (double) nose.height / 2);
                             Imgproc.circle(frame, noseCenter, 3, new Scalar(0, 255, 255), -1);
-                            caracteristicas.setDesc_Nariz(noseCenter);
-                            System.out.println("Nariz: " + noseCenter);
+                            MatNariz = noseCenter.toString();
+                            P_Nariz = noseCenter;
                         }
                     }
                 }
@@ -155,5 +157,21 @@ public class OpenCan {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getMatOlhos() {
+        return MatOlhos;
+    }
+
+    public String getMatNariz() {
+        return MatNariz;
+    }
+
+    public Point getP_Olhos() {
+        return P_Olhos;
+    }
+
+    public Point getP_Nariz() {
+        return P_Nariz;
     }
 }

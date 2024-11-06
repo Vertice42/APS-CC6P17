@@ -4,15 +4,13 @@
 
 package Apresentacao;
 
-import java.awt.*;
-
+import Modelo.Controle;
 import Modelo.OpenCan;
 
 import javax.swing.*;
 import javax.swing.GroupLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -20,6 +18,7 @@ import java.util.ArrayList;
  */
 public class frmCadastro extends JFrame implements ActionListener {
     private OpenCan openCan;
+    private String Olhos, Nariz;
     public frmCadastro() {
         initComponents();
         openCan = new OpenCan();
@@ -46,7 +45,6 @@ public class frmCadastro extends JFrame implements ActionListener {
         btnIniciar = new JButton();
         btnParar = new JButton();
         btnCapturar = new JButton();
-        lblimgSalva = new JLabel();
 
         //======== this ========
         setTitle("CADASTRO");
@@ -76,11 +74,6 @@ public class frmCadastro extends JFrame implements ActionListener {
         //---- btnCapturar ----
         btnCapturar.setText("Capturar Foto");
 
-        //---- lblimgSalva ----
-        lblimgSalva.setHorizontalAlignment(SwingConstants.CENTER);
-        lblimgSalva.setBackground(new Color(0x33ff33));
-        lblimgSalva.setDisplayedMnemonicIndex(-1);
-
         GroupLayout contentPaneLayout = new GroupLayout(contentPane);
         contentPane.setLayout(contentPaneLayout);
         contentPaneLayout.setHorizontalGroup(
@@ -92,12 +85,9 @@ public class frmCadastro extends JFrame implements ActionListener {
                         .addGroup(contentPaneLayout.createSequentialGroup()
                             .addComponent(btnIniciar, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
                             .addGap(60, 60, 60)
-                            .addGroup(contentPaneLayout.createParallelGroup()
-                                .addComponent(lblimgSalva, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
-                                .addGroup(contentPaneLayout.createSequentialGroup()
-                                    .addComponent(btnParar, GroupLayout.PREFERRED_SIZE, 121, GroupLayout.PREFERRED_SIZE)
-                                    .addGap(40, 40, 40)
-                                    .addComponent(btnCapturar, GroupLayout.PREFERRED_SIZE, 121, GroupLayout.PREFERRED_SIZE)))))
+                            .addComponent(btnParar, GroupLayout.PREFERRED_SIZE, 121, GroupLayout.PREFERRED_SIZE)
+                            .addGap(40, 40, 40)
+                            .addComponent(btnCapturar, GroupLayout.PREFERRED_SIZE, 121, GroupLayout.PREFERRED_SIZE)))
                     .addGap(18, 64, Short.MAX_VALUE)
                     .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
                         .addComponent(cbxAcesso, GroupLayout.PREFERRED_SIZE, 244, GroupLayout.PREFERRED_SIZE)
@@ -136,15 +126,13 @@ public class frmCadastro extends JFrame implements ActionListener {
                             .addComponent(cbxAcesso, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
                             .addGap(97, 97, 97))
                         .addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(lblimgSalva, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addGap(45, 45, 45)
                             .addComponent(lblImagem, GroupLayout.PREFERRED_SIZE, 348, GroupLayout.PREFERRED_SIZE)
                             .addGap(18, 18, 18)))
                     .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(btnSalvar, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnCancelar, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
-                    .addContainerGap(31, Short.MAX_VALUE))
+                    .addContainerGap(27, Short.MAX_VALUE))
         );
         pack();
         setLocationRelativeTo(getOwner());
@@ -170,7 +158,6 @@ public class frmCadastro extends JFrame implements ActionListener {
     private JButton btnIniciar;
     private JButton btnParar;
     private JButton btnCapturar;
-    private JLabel lblimgSalva;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
     private String imgUUID;
     private ArrayList<int[]> histogramas = new ArrayList<>();
@@ -195,43 +182,18 @@ public class frmCadastro extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Informe o nome do usuário!");
                 return;
             }
-            String name = txfNome.getText();
-
-            new Thread(() -> {
-                for (int i = 0; i < 26; i++) {
-                    imgUUID = name + "_" + i + "_" + "1" + ".png";
-                    openCan.SaveRosto(imgUUID);
-
-                    lblimgSalva.setText("Foto Salva: " + i);
-                    try {
-                        Thread.sleep(100); // Atraso de 1 segundo (1000 milissegundos)
-                    } catch (InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                        System.out.println("Thread interrompida: " + ex.getMessage());
-                    }
-
-                }
-                openCan.stopWebcam();
-                lblimgSalva.setText("Finalizado cadastro !!");
-                openCan.ConverterParaCinza();
-                File file = new File("src/resources/inn/");
-                if (file.exists()) {
-                    File[] files = file.listFiles();
-                    for (File f : files) {
-                        f.delete();
-                    }
-                }
-            }).start();
-
+            openCan.stopWebcam();
+            Olhos = openCan.getMatOlhos();
+            Nariz = openCan.getMatNariz();
         }
         if (e.getSource() == btnCancelar) {
             this.dispose();
         }
         if(e.getSource() == btnSalvar){
-//            Controle controle = new Controle();
-//
-//            controle.SalvarUser(txfNome.getText(), cbxAcesso.getSelectedIndex(), Objects.requireNonNull(cbxDepartamento.getSelectedItem()).toString(), histogramas);
+            Controle controle = new Controle();
 
+            controle.SalvarUser(txfNome.getText(), cbxAcesso.getSelectedIndex(), cbxDepartamento.getSelectedItem().toString(),Olhos, Nariz);
+            JOptionPane.showMessageDialog(null, controle.mensagem);
         }
     }
 }

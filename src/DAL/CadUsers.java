@@ -6,16 +6,17 @@ import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class CadUsers {
     public String mensagem = "";
 
-    public void Salvar(String nome, int privilegios, String departamento) {
+    public Boolean Salvar(String nome, int privilegios, String departamento) {
 
         try{
 
             Connection con = Conexao.getConnection();
-            String sql = "INSERT INTO users (Nome, Privilegios, Departamento) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO caduser (Nome, Privilegio, Setor) VALUES (?, ?, ?)";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, nome);
             ps.setInt(2, privilegios);
@@ -24,35 +25,32 @@ public class CadUsers {
             mensagem = "Usuário cadastrado com sucesso!";
             ps.close();
             con.close();
+            return true;
         } catch (Exception e) {
             mensagem = "Erro ao cadastrar usuário: " + e.getMessage();
             System.out.print(e.getMessage());
+            return false;
         }
     }
+    public int BuscarUserSalvo(String nome){
 
-    private File BuscarImg(String Diretorio) {
-        Diretorio = "src/resources/" + Diretorio;
-        File file = new File(Diretorio);
-        if(!file.exists()) {
-            return null;
-        }
-        return file;
-    }
-    public int UltimoUser() {
-        int id = 0;
+        int idUser = 0;
         try {
-            Connection con = Conexao.getConnection();
-            String sql = "SELECT MAX(idUser) as idUser FROM users";
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.execute();
-            if(ps.getResultSet().next()){
-                id = ps.getResultSet().getInt("idUser");
+            Connection con = null;
+            con = Conexao.getConnection();
+            String Query = "SELECT idUser FROM caduser WHERE Nome = ? LIMIT 1";
+            PreparedStatement stmt = con.prepareStatement(Query);
+            stmt.setString(1, nome);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) { // Se o ResultSet tiver pelo menos um registro
+                 idUser = rs.getInt("idUser");
+
             }
         } catch (Exception e) {
             mensagem = "Erro ao buscar usuário: " + e.getMessage();
-            System.out.print(e.getMessage());
+
         }
-        return id;
+        return idUser;
     }
 }
 

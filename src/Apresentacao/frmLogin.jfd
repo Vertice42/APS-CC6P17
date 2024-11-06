@@ -4,8 +4,8 @@ new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-			"$horizontalGroup": "par l {seq l {space :::p, comp lblImg:::p:353:p, space s:::p, par l:::p {comp btnCancelar::::130:x, comp btnLogin::l::130:x, comp btnCadastrar::l::130:x}, space ::11:x}}"
-			"$verticalGroup": "par l {seq {par l:::p {seq {space :p:22:p, comp lblImg:::p:295:p}, seq {space :p:75:p, comp btnLogin:::p:43:p, space s:::p, comp btnCancelar:::p:43:p, space :::x, comp btnCadastrar:::p:43:p}}, space ::62:x}}"
+			"$horizontalGroup": "par l {seq l {space :::p, comp lblImg:::p:442:p, space ::74:x, par l {par l:t::p {comp btnCancelar::::130:x, comp btnLogin::l:::x}, comp btnCadastrar::t:p:130:p}, space :::p}}"
+			"$verticalGroup": "par l {seq {par l {seq {space :p:22:p, comp lblImg:::p:348:p}, seq l {space :p:92:p, comp btnLogin:::p:43:p, space s:::p, comp btnCancelar:::p:43:p, space :p:75:p, comp btnCadastrar:::p:43:p}}, space ::79:x}}"
 		} ) {
 			name: "this"
 			"title": "LOGIN"
@@ -28,7 +28,7 @@ new FormModel {
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 520, 410 )
+			"size": new java.awt.Dimension( 660, 480 )
 		} )
 	}
 }
