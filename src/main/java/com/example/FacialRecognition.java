@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
@@ -31,22 +32,22 @@ public class FacialRecognition {
         Imgcodecs.imwrite(targetPath, loadedImage);
     }
 
-    private String getResFile(String name){
+    private String getResFile(String name) {
         try {
             return Paths.get(FacialRecognition.class.getClassLoader()
-            .getResource(name).toURI()).toAbsolutePath().toString();
+                    .getResource(name).toURI()).toAbsolutePath().toString();
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
         return null;
     }
-    
-    MatOfRect detectFaces(Mat loadedImage) {
+
+    public MatOfRect detectFaces(Mat loadedImage) {
         MatOfRect facesDetected = new MatOfRect();
         int minFaceSize = Math.round(loadedImage.rows() * 0.1f);
 
         CascadeClassifier cascadeClassifier = new CascadeClassifier();
-        cascadeClassifier.load(getResFile("models/haarcascades/haarcascade_frontalface_alt.xml")); 
+        cascadeClassifier.load(getResFile("models/haarcascades/haarcascade_frontalface_alt.xml"));
         cascadeClassifier.detectMultiScale(loadedImage,
                 facesDetected,
                 1.1,
@@ -57,21 +58,19 @@ public class FacialRecognition {
         return facesDetected;
     }
 
-    boolean recognizeFace(String imageA, String imageB) {
-        Mat img1 = Imgcodecs.imread(imageA);
-        Mat img2 = Imgcodecs.imread(imageB);
-
-        var faceRecognizer = FaceRecognizerSF
-        .create(getResFile("models/face_recognition_sface_2021dec.onnx"), "");
+    public boolean recognizeFace(Mat imgA, Mat imgB,
+            double COS_ScoreThreshold, double L2_ScoreThreshold) {
+        var faceRecognizer = FaceRecognizerSF.create(
+                getResFile("models/face_recognition_sface_2021dec.onnx"), "");
 
         Mat aligned_face1 = new Mat();
         Mat aligned_face2 = new Mat();
 
-        MatOfRect face1box = detectFaces(img1);
-        MatOfRect face2box = detectFaces(img2);
+        MatOfRect face1box = detectFaces(imgA);
+        MatOfRect face2box = detectFaces(imgB);
 
-        faceRecognizer.alignCrop(img1, face1box.row(0), aligned_face1);
-        faceRecognizer.alignCrop(img2, face2box.row(0), aligned_face2);
+        faceRecognizer.alignCrop(imgA, face1box.row(0), aligned_face1);
+        faceRecognizer.alignCrop(imgB, face2box.row(0), aligned_face2);
 
         Mat feature1 = new Mat();
         Mat feature2 = new Mat();
@@ -84,11 +83,20 @@ public class FacialRecognition {
         final double COS_SCORE = faceRecognizer.match(feature1, feature2, FaceRecognizerSF.FR_COSINE);
         final double L2_SCORE = faceRecognizer.match(feature1, feature2, FaceRecognizerSF.FR_NORM_L2);
         System.out.println("cos_score = " + COS_SCORE + " L2_score = " + L2_SCORE);
-
-        if (COS_SCORE >= 0.363d || L2_SCORE <= 1.128d) {
+        if (COS_SCORE >= COS_ScoreThreshold || L2_SCORE <= L2_ScoreThreshold) {
             return true;
         }
         return false;
-
     }
+
+    public boolean recognizeFace(String imageA, String imageB) {
+        return recognizeFace(Imgcodecs.imread(imageA), Imgcodecs.imread(imageB),
+                0.363d, 1.128d);
+    }
+
+    public boolean recognizeFace(Mat imageA, Mat imageB) {
+        return recognizeFace(imageA, imageB,
+                0.363d, 1.128d);
+    }
+
 }
